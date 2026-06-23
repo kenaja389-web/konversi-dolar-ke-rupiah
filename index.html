@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USD ke Rupiah - Ultra Premium</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+background:#ffffff;
+color:#202124;
+padding:30px;
+}
+
+.wrapper{
+max-width:1200px;
+margin:auto;
+}
+
+.topbar{
+color:#5f6368;
+font-size:14px;
+margin-bottom:20px;
+}
+
+.layout{
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:40px;
+}
+
+.card{
+border:1px solid #dadce0;
+border-radius:28px;
+padding:25px;
+background:#fff;
+transition:.3s;
+}
+
+.card:hover{
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.small{
+color:#5f6368;
+font-size:14px;
+}
+
+.big{
+font-size:48px;
+font-weight:700;
+margin-top:8px;
+margin-bottom:8px;
+}
+
+.update{
+color:#5f6368;
+font-size:13px;
+margin-bottom:20px;
+}
+
+.currency-row{
+display:grid;
+grid-template-columns:1fr 60px 1fr;
+gap:15px;
+align-items:center;
+}
+
+.currency-box{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+select,input{
+width:100%;
+padding:14px;
+font-size:18px;
+border:1px solid #dadce0;
+border-radius:10px;
+outline:none;
+}
+
+select:focus,
+input:focus{
+border-color:#1a73e8;
+}
+
+.swap{
+text-align:center;
+font-size:28px;
+cursor:pointer;
+user-select:none;
+}
+
+.swap:hover{
+transform:rotate(180deg);
+transition:.5s;
+}
+
+.tabs{
+display:flex;
+gap:10px;
+margin-top:25px;
+margin-bottom:20px;
+}
+
+.tab{
+padding:10px 16px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+color:#5f6368;
+}
+
+.tab.active{
+background:#e8eaed;
+color:#202124;
+}
+
+.chart-box{
+height:280px;
+}
+
+.sidebar h2{
+font-size:32px;
+font-weight:500;
+margin-bottom:20px;
+}
+
+.search-item{
+border:1px solid #dadce0;
+border-radius:999px;
+padding:18px 20px;
+margin-bottom:12px;
+font-size:20px;
+cursor:pointer;
+transition:.3s;
+}
+
+.search-item:hover{
+background:#f8f9fa;
+transform:translateX(5px);
+}
+
+.footer{
+margin-top:15px;
+font-size:12px;
+color:#5f6368;
+}
+
+.google-logo{
+font-size:22px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.g1{color:#4285F4}
+.g2{color:#EA4335}
+.g3{color:#FBBC05}
+.g4{color:#4285F4}
+.g5{color:#34A853}
+.g6{color:#EA4335}
+
+@media(max-width:900px){
+
+.layout{
+grid-template-columns:1fr;
+}
+
+.big{
+font-size:34px;
+}
+
+.sidebar h2{
+font-size:24px;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+<div class="google-logo">
+<span class="g1">G</span>
+<span class="g2">o</span>
+<span class="g3">o</span>
+<span class="g4">g</span>
+<span class="g5">l</span>
+<span class="g6">e</span>
+</div>
+
+<div class="topbar">
+About 17.000 results
+</div>
+
+<div class="layout">
+
+<div class="card">
+
+<div class="small">1 US Dollar =</div>
+
+<div class="big" id="mainRate">
+3.000 Indonesian Rupiah
+</div>
+
+<div class="update">
+Last updated · Just now
+</div>
+
+<div class="currency-row">
+
+<div class="currency-box">
+<select>
+<option>USD $ - US Dollar</option>
+</select>
+
+<input
+type="number"
+value="1"
+id="usd"
+oninput="convert()">
+</div>
+
+<div class="swap">⇄</div>
+
+<div class="currency-box">
+<select>
+<option>IDR Rp - Indonesian Rupiah</option>
+</select>
+
+<input
+type="text"
+id="idr"
+readonly>
+</div>
+
+</div>
+
+<div class="tabs">
+<div class="tab">1D</div>
+<div class="tab">5D</div>
+<div class="tab">1M</div>
+<div class="tab active">1Y</div>
+<div class="tab">5Y</div>
+<div class="tab">MAX</div>
+</div>
+
+<div class="chart-box">
+<canvas id="chart"></canvas>
+</div>
+
+<div class="footer">
+Data simulasi • Kurs tetap 1 USD = Rp3.000
+</div>
+
+</div>
+
+<div class="sidebar">
+
+<h2>
+Deep dive into konversi mata uang...
+</h2>
+
+<div class="search-item">💲 1 dolar berapa rupiah</div>
+<div class="search-item">💲 10 dolar berapa rupiah</div>
+<div class="search-item">💲 100 dolar berapa rupiah</div>
+<div class="search-item">💲 1.000 dolar berapa rupiah</div>
+<div class="search-item">💲 1 juta dolar berapa rupiah</div>
+<div class="search-item">💲 10 juta dolar berapa rupiah</div>
+<div class="search-item">💲 50 juta dolar berapa rupiah</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function convert(){
+
+let usd =
+parseFloat(document.getElementById('usd').value) || 0;
+
+let idr = usd * 3000;
+
+document.getElementById('idr').value =
+idr.toLocaleString('id-ID');
+
+document.getElementById('mainRate').innerHTML =
+idr.toLocaleString('id-ID') +
+' Indonesian Rupiah';
+
+}
+
+convert();
+
+const ctx =
+document.getElementById('chart');
+
+new Chart(ctx,{
+type:'line',
+data:{
+labels:[
+'Jun','Jul','Aug','Sep',
+'Okt','Nov','Des','Jan',
+'Feb','Mar','Apr','Mei','Jun'
+],
+datasets:[{
+data:[
+1600,1620,1650,1700,
+1750,1780,1850,1900,
+2100,2300,2500,2800,3000
+],
+borderColor:'#188038',
+backgroundColor:'rgba(24,128,56,.15)',
+fill:true,
+tension:.4
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+legend:{
+display:false
+}
+},
+scales:{
+y:{
+grid:{
+color:'#eee'
+}
+},
+x:{
+grid:{
+display:false
+}
+}
+}
+}
+});
+
+</script><div class="big" id="mainRate">
+17.835 Indonesian Rupiah
+</div>
+
+<script>
+function convert(){
+
+let usd =
+parseFloat(document.getElementById('usd').value) || 0;
+
+let idr = usd * 3000;
+
+document.getElementById('idr').value =
+idr.toLocaleString('id-ID');
+
+document.getElementById('mainRate').innerHTML =
+'17.835 → ' +
+idr.toLocaleString('id-ID') +
+' Indonesian Rupiah';
+
+}
+
+convert();
+
+const ctx =
+document.getElementById('chart');
+
+new Chart(ctx,{
+type:'line',
+data:{
+labels:[
+'Jun','Jul','Aug','Sep',
+'Okt','Nov','Des','Jan',
+'Feb','Mar','Apr','Mei','Jun'
+],
+datasets:[{
+label:'USD ke IDR',
+data:[
+17835,
+17600,
+17300,
+16800,
+16000,
+15000,
+14000,
+12500,
+11000,
+9000,
+7000,
+5000,
+3000
+],
+borderColor:'#188038',
+backgroundColor:'rgba(24,128,56,.15)',
+fill:true,
+tension:.4,
+pointRadius:4,
+pointHoverRadius:7
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+legend:{
+display:false
+}
+},
+scales:{
+y:{
+min:0,
+max:20000,
+ticks:{
+callback:function(value){
+return value.toLocaleString('id-ID');
+}
+}
+},
+x:{
+grid:{
+display:false
+}
+}
+}
+}
+});
+</script>
+
+</body>
+</html>
